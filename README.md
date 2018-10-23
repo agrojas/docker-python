@@ -1,6 +1,6 @@
 # docker-python-example
 
-Proyect to test docker-py
+Proyect to test docker-py and mysql image
 
 ## Getting Started
 
