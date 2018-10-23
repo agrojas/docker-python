@@ -1,12 +1,12 @@
-# docker-python-example
+# volatile-db-components
 
-Proyect to test docker-py
+Proyect to test volatile databases with docker & python
 
 ## Getting Started
 
 ```
-git clone git@github.com:agrojas/docker-python.git
-cd docker-python.git
+git clone git@github.com:agrojas/volatile-db-components.git
+cd volatile-db-components
 ```
 ### Prerequisites
 
