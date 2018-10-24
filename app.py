@@ -1,37 +1,42 @@
-import docker
-import os
-
-client = docker.from_env()
-image_name = 'mysql:5.6'
-container_name="some-mysql"
-image = None
-container_ports = {'33061':'3306'}
-
-container_environment={'MYSQL_ROOT_PASSWORD':'mysql'}
-
-from_path = os.getcwd() + '/config/mysql'
-to_path = '/docker-entrypoint-initdb.d'
-mode = 'rw'
-container_volumes= {from_path: {'bind': to_path, 'mode': mode}}
+import argparse
+from mysql_container import MysqlContainer
+from container_manager import DockerContainerManager
 
 
-image_list = client.images.list(name=image_name)
-print("Image_list {}".format(image_list))
-if not image_list:
-	print("Pull {}".format(image_name))
-	image = client.images.pull(image_name)
+def get_container_manager(image, secret):
+	if image == 'mysql':
+		return MysqlContainer(secret)
+	elif image == 'cassandra':
+		return None
+	else:
+		return None
 
+parser = argparse.ArgumentParser()
+parser.add_argument("action", help="action to execute",choices=['run', 'info', 'stop', 'verify','pull'])
+parser.add_argument("-i", "--image", help="image type", default='mysql',choices=['mysql', 'cassandra'])
+parser.add_argument("-n", "--name", help="increase output verbosity")
+parser.add_argument("-s", "--secret", help="increase output verbosity")
 
-print("$ docker run -v {} -e {} -p {}--name {} -d {} ".format(container_volumes,
-															container_environment,
-															container_ports,
-															container_name,
-															image_name))
-container =  client.containers.run(image=image_name, 
-									name=container_name,
-									volumes=container_volumes,
-									environment=container_environment,
-									detach=True)
+args = parser.parse_args()
+manager = DockerContainerManager()
 
+if args.action == 'run':
+	print('run {}'.format(args.name))
+	container_client = get_container_manager(args.image, args.secret)
+	result = container_client.run(args.name)
+	print(result)
+elif args.action == 'info':
+	print('info {}'.format(args.name))
+	print(manager.get(args.name))
+elif args.action == 'stop':
+	print('stop {}'.format(args.name))
+	manager.stop(args.name)
+elif args.action == 'verify':
+	print('verify image {}'.format(args.image))
+	print(manager.check_image(args.image))
+elif args.action == 'pull':
+	print('pull image {}'.format(args.image))
+	print(manager.pull(args.image))
+else:
+	print('error {}'.format(args.name))
 
-print(container)
