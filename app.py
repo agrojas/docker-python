@@ -1,6 +1,6 @@
 import argparse
-from mysql_container import MysqlContainer
-from container_manager import DockerContainerManager
+from services.container_manager import DockerContainerManager
+from services.mysql_container import MysqlContainer
 
 
 def get_container_manager(image, secret):

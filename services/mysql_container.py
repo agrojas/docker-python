@@ -1,5 +1,5 @@
 import os
-from container_manager import DockerContainerManager
+from .container_manager import DockerContainerManager
 
 class MysqlContainer(object):
 	"""docstring for MysqlContainer"""
